@@ -7,12 +7,9 @@ import (
 	"net/http"
 	"time"
 
-	"encoding/json"
+	"github.com/bailu1901/goweblua/executor"
 
-	"github.com/bailu1901/goweblua/battle_manager"
-
-	"github.com/golang/protobuf/proto"
-	"golang.org/x/net/context"
+	"context"
 )
 
 //HTTPHandleFunc HTTPHandle
@@ -20,7 +17,7 @@ func HTTPHandleFunc(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm()
 	if "reload" == r.Form.Get("cmd") {
-		battle_manager.RecreateNewWorker()
+		executor.RecreateNewWorker()
 		w.Write([]byte("ok"))
 		return
 	}
@@ -62,14 +59,9 @@ func HTTPHandleFunc(w http.ResponseWriter, r *http.Request) {
 		select {
 		case <-ctx1.Done():
 			resultStr = []byte(ctx1.Err().Error())
-		case ret := <-battle_manager.Process(ctx1, 1, buf):
+		case ret := <-executor.Process(ctx1, buf):
 			if len(ret) > 0 {
-				info := common.BattleResultInfo{}
-				if e := proto.Unmarshal(ret, &info); nil != e {
-					resultStr = []byte(e.Error())
-				} else {
-					resultStr, _ = json.Marshal(info)
-				}
+				resultStr = ret
 			} else {
 				resultStr = []byte("error: runtime empty")
 			}

@@ -14,27 +14,12 @@ import (
 
 	l4g "github.com/alecthomas/log4go"
 	"github.com/bailu1901/goweblua/executor"
+	"github.com/bailu1901/goweblua/web"
 )
 
 var (
 	gWeb = flag.String("web", "10001", "web listen address")
 )
-
-//Init 初始化
-func Init() bool {
-	//http.HandleFunc("/", web.HTTPHandleFunc)
-
-	go func() {
-		e := http.ListenAndServe(fmt.Sprintf(":%s", *gWeb), nil)
-		if nil != e {
-			panic(e)
-		}
-	}()
-	fmt.Printf("[main] http.ListenAndServe port=[%s]\n", *gWeb)
-	l4g.Info("[main] http.ListenAndServe port=[%s]", *gWeb)
-
-	return true
-}
 
 func main() {
 
@@ -42,8 +27,6 @@ func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU() * 2)
 
 	defer func() {
-		//clear
-		time.Sleep(time.Second)
 		l4g.Info("[main] quit...")
 		l4g.Global.Close()
 	}()
@@ -51,7 +34,15 @@ func main() {
 	// 有多少核就起多少个worker
 	executor.Run(runtime.NumCPU())
 
-	Init()
+	http.HandleFunc("/", web.HTTPHandleFunc)
+
+	go func() {
+		e := http.ListenAndServe(fmt.Sprintf(":%s", *gWeb), nil)
+		if nil != e {
+			panic(e)
+		}
+	}()
+	l4g.Info("[main] http.ListenAndServe port=[%s]", *gWeb)
 
 	l4g.Info("[main] executor start...")
 

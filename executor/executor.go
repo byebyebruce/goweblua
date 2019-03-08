@@ -33,9 +33,7 @@ func printstack(s *luajit.State) {
 	l4g.Error("---")
 }
 
-//NewBattleLua 构造器
-//@param - entryFile 入口脚本文件
-//@param - funcName 复盘调用函数
+//NewLuaWorker 构造器
 func NewLuaWorker(entryFile string, funcName string) (*luaWorker, error) {
 	worker := &luaWorker{
 		lua:      luajit.Newstate(),
@@ -78,7 +76,7 @@ func (worker *luaWorker) Init() error {
 }
 
 //Execute 执行器 groutine安全的
-func (worker *luaWorker) Execute(battleID uint64, data []byte) ([]byte, error) {
+func (worker *luaWorker) Execute(data []byte) ([]byte, error) {
 
 	//恢复lua栈
 	worker.lua.Settop(0)
@@ -88,7 +86,7 @@ func (worker *luaWorker) Execute(battleID uint64, data []byte) ([]byte, error) {
 	worker.lua.Pushlstring(string(data), len(data))
 	if err := worker.lua.Pcall(1, 1, 0); err != nil {
 		printstack(worker.lua)
-		l4g.Error("[worker lua] Execute Pcall error=%s battleID=%d", err, battleID)
+		l4g.Error("[worker lua] Execute Pcall error=%s", err)
 		return []byte(""), err
 	}
 

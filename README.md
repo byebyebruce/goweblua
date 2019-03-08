@@ -7,9 +7,17 @@
 * 可以扩展用grpc做外部的可负载均衡的接口，我这里只简单的实现了用http做外部接口
 
 ## 编译
-* make battle
+* cd github.com/bailu1901/goweblua && go build github.com/bailu1901/goweblua
 * **windows下编译battle**因为用了c代码，编译需要gcc和make，windows下需要安装mingw-64x或者tdm64-gcc(需要把tdm64-gcc/bin/mingw32-make.exe改成make.exe)。
 * 因为用了cgo所以不支持交叉编译
+
+## 运行
+* 要确保assets文件夹在可执行文件旁边
+* 若要修改初始加载的lua文件或执行执行函数清修改 
+	```
+	k_luaFile                   = "assets/main.lua"
+	k_luaFunc                   = "MyFunc"
+	```
 
 ## lua库
 * 我用的是LuaJIT-2.1.0-beta1，可自行替换lua的c代码，但要修改c/Makefile

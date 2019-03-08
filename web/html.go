@@ -33,7 +33,7 @@ const htmlStr = `<html>
         <label for="API">Parameter:</label>
         <p>
             <!-- <input type="text" name="API" id="api" value="help" rows="100"> -->
-            <textarea id="api" name="API" rows="10" cols="80">{"id":1,"typeID":12}</textarea>
+            <textarea id="api" name="API" rows="10" cols="80">Hello world</textarea>
             <button id="btn" style="height:50px;width:50px">click</button>
         </p>
 

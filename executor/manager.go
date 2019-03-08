@@ -18,15 +18,14 @@ const (
 	k_AfterTimesCreateNewWorker = 512                    //计算这么多次之后强制创建新的worker
 )
 
-//battleParam 战斗参数
-type battleParam struct {
-	BattleID uint64
-	Data     []byte
-	RetChan  chan<- []byte
+//param 战斗参数
+type param struct {
+	Data    []byte
+	RetChan chan<- []byte
 }
 
 var (
-	msgChan          chan *battleParam     //待计算队列
+	msgChan          chan *param           //待计算队列
 	closeChan        chan struct{}         //关闭
 	wg               sync.WaitGroup        //wg
 	recreateChanMap  map[int]chan struct{} //重建worker通道map
@@ -34,7 +33,7 @@ var (
 )
 
 func init() {
-	msgChan = make(chan *battleParam, k_MAX_MSG)
+	msgChan = make(chan *param, k_MAX_MSG)
 	closeChan = make(chan struct{})
 	wg = sync.WaitGroup{}
 	recreateChanMap = make(map[int]chan struct{})
@@ -91,7 +90,7 @@ func Run(workerNum int) {
 					mtxNew.Lock() // 加载脚本文件需要加锁，不然会多次打开文件报错
 					newWorker, err := NewLuaWorker(k_luaFile, k_luaFunc)
 					if nil != err {
-						l4g.Error("[executor] create new worker[%d] NewBattleLua error=[%s]", idx, err.Error())
+						l4g.Error("[executor] create new worker[%d] NewLuaWorker error=[%s]", idx, err.Error())
 						mtxNew.Unlock()
 						break
 					}
@@ -118,7 +117,7 @@ func Run(workerNum int) {
 					l4g.Info("[executor] worker[%d] begin", idx)
 
 					//计算
-					ret, err := worker.Execute(p.BattleID, p.Data)
+					ret, err := worker.Execute(p.Data)
 					if nil != err {
 						l4g.Error("[executor] worker[%d].Execute error=%s", idx, err.Error())
 					}
@@ -128,9 +127,9 @@ func Run(workerNum int) {
 					p.RetChan <- ret
 
 					if elapsed > k_PROCESS_TIMEOUT {
-						l4g.Warn("[executor] worker[%d] end BattleID=[%d] !!too slow!! time=[%f]s, ", idx, p.BattleID, elapsed.Seconds())
+						l4g.Warn("[executor] worker[%d] end !!too slow!! time=[%f]s, ", idx, elapsed.Seconds())
 					} else {
-						l4g.Info("[executor] worker[%d] end BattleID=[%d] time=[%f]s, ", idx, p.BattleID, elapsed.Seconds())
+						l4g.Info("[executor] worker[%d] end time=[%f]s, ", idx, elapsed.Seconds())
 					}
 
 					// 累计次数加1
@@ -157,7 +156,7 @@ func Run(workerNum int) {
 					start := time.Now()
 					l4g.Info("[executor] worker[%d] begin", idx)
 
-					ret, err := worker.Execute(p.BattleID, p.Data)
+					ret, err := worker.Execute(p.Data)
 					if nil != err {
 						l4g.Error("[executor] worker.Execute error=%s", err.Error())
 					}
@@ -167,9 +166,9 @@ func Run(workerNum int) {
 					p.RetChan <- ret
 
 					if elapsed > k_PROCESS_TIMEOUT {
-						l4g.Warn("[executor] worker[%d] end BattleID=[%d] !!too slow!! time=[%f]s, ", idx, p.BattleID, elapsed.Seconds())
+						l4g.Warn("[executor] worker[%d] end !!too slow!! time=[%f]s, ", idx, elapsed.Seconds())
 					} else {
-						l4g.Info("[executor] worker[%d] end BattleID=[%d] time=[%f]s, ", idx, p.BattleID, elapsed.Seconds())
+						l4g.Info("[executor] worker[%d] end time=[%f]s, ", idx, elapsed.Seconds())
 					}
 				default:
 					hasTask = false
@@ -186,20 +185,19 @@ func Run(workerNum int) {
 }
 
 //Process 复盘战斗
-func Process(ctx context.Context, battleID uint64, data []byte) <-chan []byte {
+func Process(ctx context.Context, data []byte) <-chan []byte {
 
 	retChan := make(chan []byte, 1)
 
-	param := &battleParam{
-		BattleID: battleID,
-		Data:     data,
-		RetChan:  retChan,
+	p := &param{
+		Data:    data,
+		RetChan: retChan,
 	}
 
 	select {
 	case <-ctx.Done():
-		l4g.Error("[battle_manager] Process msgChan is full error:[%s]", ctx.Err().Error())
-	case msgChan <- param:
+		l4g.Error("[executor] Process msgChan is full error:[%s]", ctx.Err().Error())
+	case msgChan <- p:
 	}
 
 	return retChan
@@ -216,7 +214,7 @@ func RecreateNewWorker() {
 		default:
 		}
 	}
-	l4g.Error("[battle_manager] CreateNewWorker")
+	l4g.Error("[executor] CreateNewWorker")
 }
 
 // Close 关闭
