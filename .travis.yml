@@ -1,0 +1,16 @@
+language: go
+
+go:
+  - 1.11.x
+
+
+env:
+  - TRAVIS=1 PYTHONWARNINGS=ignore
+
+services:
+
+install:
+  - go get -u github.com/alecthomas/log4go
+
+script:
+  - go build

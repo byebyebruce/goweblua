@@ -1,3 +1,7 @@
+[![GoDoc](https://godoc.org/github.com/bailu1901/goweblua?status.png)](https://godoc.org/github.com/bailu1901/goweblua)
+[![Build Status](https://travis-ci.org/bailu1901/goweblua.svg?branch=master)](https://travis-ci.org/bailu1901/goweblua)
+[![Go Report](https://goreportcard.com/badge/github.com/bailu1901/goweblua)](https://goreportcard.com/report/github.com/bailu1901/goweblua)
+
 
 # 简介
 	本项目是用go语言编写，结合cgo功能，支持高并发执行lua脚本的程序。
