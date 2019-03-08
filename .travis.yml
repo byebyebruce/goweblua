@@ -13,4 +13,4 @@ install:
   - go get -u github.com/alecthomas/log4go
 
 script:
-  - go build
+  - make

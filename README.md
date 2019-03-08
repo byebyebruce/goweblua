@@ -11,7 +11,7 @@
 * 可以扩展用grpc做外部的可负载均衡的接口，我这里只简单的实现了用http做外部接口
 
 ## 编译
-* cd github.com/bailu1901/goweblua && go build github.com/bailu1901/goweblua
+* 输入命令 make
 * **windows下编译battle**因为用了c代码，编译需要gcc和make，windows下需要安装mingw-64x或者tdm64-gcc(需要把tdm64-gcc/bin/mingw32-make.exe改成make.exe)。
 * 因为用了cgo所以不支持交叉编译
 
