@@ -3,7 +3,7 @@ package executor
 import (
 	"github.com/bailu1901/goweblua/luajit"
 
-	"github.com/pkg/errors"
+	"errors"
 
 	l4g "github.com/alecthomas/log4go"
 )
