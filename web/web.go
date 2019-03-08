@@ -12,7 +12,7 @@ import (
 	"context"
 )
 
-//HTTPHandleFunc HTTPHandle
+//HTTPHandleFunc web接口
 func HTTPHandleFunc(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm()

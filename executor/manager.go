@@ -1,3 +1,4 @@
+// Package executor 是lua并发执行器
 package executor
 
 import (
@@ -184,7 +185,7 @@ func Run(workerNum int) {
 
 }
 
-//Process 复盘战斗
+//Process 执行参数
 func Process(ctx context.Context, data []byte) <-chan []byte {
 
 	retChan := make(chan []byte, 1)

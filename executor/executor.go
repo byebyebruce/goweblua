@@ -75,7 +75,7 @@ func (worker *luaWorker) Init() error {
 	return nil
 }
 
-//Execute 执行器 groutine安全的
+//Execute 执行 groutine不安全
 func (worker *luaWorker) Execute(data []byte) ([]byte, error) {
 
 	//恢复lua栈
