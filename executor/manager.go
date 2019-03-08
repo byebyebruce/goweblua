@@ -1,4 +1,3 @@
-// Package executor 是lua并发执行器
 package executor
 
 import (
