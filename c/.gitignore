@@ -1,0 +1,5 @@
+*.o
+*.a
+
+#LuaJIT
+#LuaJIT-2.1.0-beta1
