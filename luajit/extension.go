@@ -17,7 +17,10 @@ extern int			luaopen_lpeg(lua_State*);
 extern int			luaopen_cjson(lua_State*);
 */
 import "C"
-import "unsafe"
+import (
+	"fmt"
+	"unsafe"
+)
 
 func (s *State) Openpbclibs() {
 	C.luaopen_protobuf_c(s.l)
@@ -45,4 +48,22 @@ func (s *State) Tolstring(index int) (string, int) {
 		return "", 0
 	}
 	return C.GoString(str), int(c)
+}
+
+// AddSearchPath 添加搜索路径
+func (s *State) AddSearchPath(path string) {
+	s.Getglobal("package")
+	s.Getfield(-1, "path")
+	curPath := s.Tostring(-1)
+	s.Pushstring(fmt.Sprintf("%s/?.lua;", path) + curPath)
+	s.Setfield(-3, "path")
+	s.Pop(2)
+	/*
+		C.lua_getglobal(s.l, "package")
+		C.lua_getfield(s.l, -1, "path")
+		curPath := C.lua_tostring(s.l, -1)
+		C.lua_pushfstring(s.l, "%s;%s/?.lua", curPath, path)
+		C.lua_setfield(s.l, -3, "path")
+		C.lua_pop(s.l, 2)
+	*/
 }

@@ -35,7 +35,7 @@ func printstack(s *luajit.State) {
 }
 
 //NewLuaWorker 构造器
-func NewLuaWorker(entryFile string, funcName string) (*luaWorker, error) {
+func NewLuaWorker(entryFile string, funcName string, searchPath ...string) (*luaWorker, error) {
 	worker := &luaWorker{
 		lua:      luajit.Newstate(),
 		funcName: funcName,
@@ -45,6 +45,9 @@ func NewLuaWorker(entryFile string, funcName string) (*luaWorker, error) {
 	worker.lua.Openpbclibs()
 	worker.lua.Openlpeglibs()
 	worker.lua.Opencjsonlibs()
+	for _, v := range searchPath {
+		worker.lua.AddSearchPath(v)
+	}
 
 	if "" != entryFile {
 		if err := worker.lua.Loadfile(entryFile); nil != err {

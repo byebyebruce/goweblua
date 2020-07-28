@@ -24,7 +24,7 @@ func HTTPHandleFunc(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == "GET" {
-		t, err := template.New("test").Parse(htmlStr)
+		t, err := template.ParseFiles("assets/html/index.html")
 		if err != nil {
 			w.Write([]byte("error"))
 			return

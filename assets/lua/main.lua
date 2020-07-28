@@ -1,8 +1,10 @@
+require "test"
+
 print("load main begin!!")
 
 
 function MyFunc(data)
-	return "lua:MyFunc "..data
+	return test(data)
 end
 
 

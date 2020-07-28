@@ -19,6 +19,9 @@ import (
 
 var (
 	gWeb = flag.String("web", "10001", "web listen address")
+	searchPath = flag.String("search", "assets/lua", "lua search path")
+	funcName = flag.String("func", "MyFunc", "entry function name")
+	file = flag.String("file", "assets/lua/main.lua", "entry function name")
 )
 
 func main() {
@@ -32,7 +35,7 @@ func main() {
 	}()
 
 	// 有多少核就起多少个worker
-	executor.Run(runtime.NumCPU())
+	executor.Run(runtime.NumCPU(), *file, *funcName, *searchPath)
 
 	http.HandleFunc("/", web.HTTPHandleFunc)
 

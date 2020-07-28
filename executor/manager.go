@@ -11,8 +11,6 @@ import (
 )
 
 const (
-	k_luaFile                   = "assets/main.lua"
-	k_luaFunc                   = "MyFunc"
 	k_MAX_MSG                   = 256                    //最大消息数
 	k_PROCESS_TIMEOUT           = 200 * time.Millisecond //超时时间
 	k_AfterTimesCreateNewWorker = 512                    //计算这么多次之后强制创建新的worker
@@ -40,7 +38,7 @@ func init() {
 }
 
 //Run 主逻辑
-func Run(workerNum int) {
+func Run(workerNum int, file string, funcName string, searchPath ...string) {
 	recreateChanLock.Lock()
 	defer recreateChanLock.Unlock()
 
@@ -60,7 +58,7 @@ func Run(workerNum int) {
 		recreateChanMap[i] = make(chan struct{}, 1)
 
 		//创建worker
-		worker, err := NewLuaWorker(k_luaFile, k_luaFunc)
+		worker, err := NewLuaWorker(file, funcName, searchPath...)
 		if nil != err {
 			panic(err)
 		}
@@ -88,7 +86,7 @@ func Run(workerNum int) {
 				select {
 				case <-cmdChan: // 创建一个新的worker
 					mtxNew.Lock() // 加载脚本文件需要加锁，不然会多次打开文件报错
-					newWorker, err := NewLuaWorker(k_luaFile, k_luaFunc)
+					newWorker, err := NewLuaWorker(file, funcName, searchPath...)
 					if nil != err {
 						l4g.Error("[executor] create new worker[%d] NewLuaWorker error=[%s]", idx, err.Error())
 						mtxNew.Unlock()
