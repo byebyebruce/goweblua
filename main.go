@@ -13,8 +13,8 @@ import (
 	"time"
 
 	l4g "github.com/alecthomas/log4go"
-	"github.com/bailu1901/goweblua/executor"
-	"github.com/bailu1901/goweblua/web"
+	"github.com/byebyebruce/goweblua/executor"
+	"github.com/byebyebruce/goweblua/web"
 )
 
 var (

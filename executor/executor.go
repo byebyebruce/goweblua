@@ -2,7 +2,7 @@
 package executor
 
 import (
-	"github.com/bailu1901/goweblua/luajit"
+	"github.com/byebyebruce/goweblua/luajit"
 
 	"errors"
 
