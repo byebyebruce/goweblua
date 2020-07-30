@@ -1,7 +1,8 @@
-// Package web web接口
-package web
+// Package api_http接口
+package api_http
 
 import (
+	"context"
 	"fmt"
 	"html/template"
 	"io/ioutil"
@@ -9,8 +10,6 @@ import (
 	"time"
 
 	"github.com/byebyebruce/goweblua/executor"
-
-	"context"
 )
 
 var (

@@ -9,12 +9,13 @@ import (
 	"os"
 	"os/signal"
 	"runtime"
+	"strings"
 	"syscall"
 	"time"
 
 	l4g "github.com/alecthomas/log4go"
+	api_http "github.com/byebyebruce/goweblua/cmd/api/http"
 	"github.com/byebyebruce/goweblua/executor"
-	"github.com/byebyebruce/goweblua/web"
 )
 
 var (
@@ -41,14 +42,13 @@ func main() {
 		RecycleTimes:  512,
 		LuaEntryFile:  *file,
 		LuaEntryFunc:  *funcName,
-		LuaSearchPath: *searchPath,
+		LuaSearchPath: strings.Split(*searchPath, ","),
 	}
 	mgr := executor.NewManager(cfg)
 	mgr.Run()
 
-	web.Mgr = mgr
-
-	http.HandleFunc("/", web.HTTPHandleFunc)
+	api_http.Mgr = mgr
+	http.HandleFunc("/", api_http.HTTPHandleFunc)
 
 	go func() {
 		e := http.ListenAndServe(fmt.Sprintf(":%s", *gWeb), nil)

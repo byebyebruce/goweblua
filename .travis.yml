@@ -1,7 +1,7 @@
 language: go
 
 go:
-  - 1.11.x
+  - 1.13.x
 
 
 env:
@@ -9,8 +9,6 @@ env:
 
 services:
 
-install:
-  - go get -u github.com/alecthomas/log4go
 
 script:
   - make

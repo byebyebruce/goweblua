@@ -13,12 +13,12 @@ import (
 // Config 配置
 type Config struct {
 	WorkerNum     int
-	MaxTask       int    // 最大消息数
-	TimeoutMS     int64  // 超时时间
-	RecycleTimes  int    // 计算这么多次之后强制创建新的worker
-	LuaEntryFile  string // lua入口脚本
-	LuaEntryFunc  string // lua入口函数
-	LuaSearchPath string // lua搜索目录
+	MaxTask       int      // 最大消息数
+	TimeoutMS     int64    // 超时时间
+	RecycleTimes  int      // 计算这么多次之后强制创建新的worker
+	LuaEntryFile  string   // lua入口脚本
+	LuaEntryFunc  string   // lua入口函数
+	LuaSearchPath []string // lua搜索目录
 }
 
 //param 战斗参数
@@ -69,7 +69,7 @@ func (m *Manager) Run() {
 		m.recreateChanMap[i] = make(chan struct{}, 1)
 
 		//创建worker
-		worker, err := NewLuaWorker(m.cfg.LuaEntryFile, m.cfg.LuaEntryFunc, m.cfg.LuaSearchPath)
+		worker, err := NewLuaWorker(m.cfg.LuaEntryFile, m.cfg.LuaEntryFunc, m.cfg.LuaSearchPath...)
 		if nil != err {
 			panic(err)
 		}
@@ -97,7 +97,7 @@ func (m *Manager) Run() {
 				select {
 				case <-cmdChan: // 创建一个新的worker
 					mtxNew.Lock() // 加载脚本文件需要加锁，不然会多次打开文件报错
-					newWorker, err := NewLuaWorker(m.cfg.LuaEntryFile, m.cfg.LuaEntryFunc, m.cfg.LuaSearchPath)
+					newWorker, err := NewLuaWorker(m.cfg.LuaEntryFile, m.cfg.LuaEntryFunc, m.cfg.LuaSearchPath...)
 					if nil != err {
 						l4g.Error("[executor] create new worker[%d] NewLuaWorker error=[%s]", idx, err.Error())
 						mtxNew.Unlock()
