@@ -18,10 +18,10 @@ import (
 )
 
 var (
-	gWeb = flag.String("web", "10001", "web listen address")
+	gWeb       = flag.String("web", "10001", "web listen address")
 	searchPath = flag.String("search", "assets/lua", "lua search path")
-	funcName = flag.String("func", "MyFunc", "entry function name")
-	file = flag.String("file", "assets/lua/main.lua", "entry function name")
+	funcName   = flag.String("func", "MyFunc", "entry function name")
+	file       = flag.String("file", "assets/lua/main.lua", "entry function name")
 )
 
 func main() {
@@ -34,8 +34,19 @@ func main() {
 		l4g.Global.Close()
 	}()
 
-	// 有多少核就起多少个worker
-	executor.Run(runtime.NumCPU(), *file, *funcName, *searchPath)
+	cfg := executor.Config{
+		WorkerNum:     8,
+		MaxTask:       32,
+		TimeoutMS:     1000,
+		RecycleTimes:  512,
+		LuaEntryFile:  *file,
+		LuaEntryFunc:  *funcName,
+		LuaSearchPath: *searchPath,
+	}
+	mgr := executor.NewManager(cfg)
+	mgr.Run()
+
+	web.Mgr = mgr
 
 	http.HandleFunc("/", web.HTTPHandleFunc)
 
@@ -87,6 +98,6 @@ QUIT:
 
 	l4g.Warn("[main] is quiting...")
 
-	executor.Close()
+	mgr.Close()
 	l4g.Warn("[main] executor is stopped")
 }

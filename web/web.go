@@ -13,12 +13,16 @@ import (
 	"context"
 )
 
+var (
+	Mgr *executor.Manager
+)
+
 //HTTPHandleFunc web接口
 func HTTPHandleFunc(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm()
 	if "reload" == r.Form.Get("cmd") {
-		executor.RecreateNewWorker()
+		Mgr.RecreateNewWorker()
 		w.Write([]byte("ok"))
 		return
 	}
@@ -60,7 +64,7 @@ func HTTPHandleFunc(w http.ResponseWriter, r *http.Request) {
 		select {
 		case <-ctx1.Done():
 			resultStr = []byte(ctx1.Err().Error())
-		case ret := <-executor.Process(ctx1, buf):
+		case ret := <-Mgr.Process(ctx1, buf):
 			if len(ret) > 0 {
 				resultStr = ret
 			} else {
