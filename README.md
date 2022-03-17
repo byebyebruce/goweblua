@@ -17,15 +17,15 @@
 
 ## 运行
 ```
-./main
+CGO_ENABLED=1 go run ./cmd
 ```
 
 ## lua库
 * 我用的是LuaJIT-2.1.0-beta1，可自行替换lua的c代码，但要修改c/Makefile
 
 ## Web接口
-* 浏览器提供了一个简单web页面 http://127.0.0.1:10001
-* 热加载lua脚本 http://127.0.0.1:10001?cmd=reload
+* 浏览器提供了一个简单web页面 http://127.0.0.1
+* 热加载lua脚本 http://127.0.0.1?cmd=reload
 
 
 

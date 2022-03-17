@@ -1,5 +1,7 @@
 all: goweblua
 
-goweblua:
+lualib:
 	cd c && make
-	go build -o goweblua cmd/main.go
+
+goweblua: lualib
+	CGO_ENABLED=1 go build -o goweblua cmd/main.go

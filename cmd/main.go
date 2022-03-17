@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"math/rand"
 	"net/http"
 	_ "net/http/pprof"
@@ -19,7 +18,7 @@ import (
 )
 
 var (
-	gWeb       = flag.String("web", "10001", "web listen address")
+	gWeb       = flag.String("web", ":80", "web listen address")
 	searchPath = flag.String("search", "assets/lua", "lua search path")
 	funcName   = flag.String("func", "MyFunc", "entry function name")
 	file       = flag.String("file", "assets/lua/main.lua", "entry function name")
@@ -51,12 +50,12 @@ func main() {
 	http.HandleFunc("/", api_http.HTTPHandleFunc)
 
 	go func() {
-		e := http.ListenAndServe(fmt.Sprintf(":%s", *gWeb), nil)
+		e := http.ListenAndServe(*gWeb, nil)
 		if nil != e {
 			panic(e)
 		}
 	}()
-	l4g.Info("[main] http.ListenAndServe port=[%s]", *gWeb)
+	l4g.Info("[main] http.ListenAndServe addr=[%s]", *gWeb)
 
 	l4g.Info("[main] executor start...")
 

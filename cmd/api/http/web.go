@@ -3,6 +3,7 @@ package api_http
 
 import (
 	"context"
+	_ "embed"
 	"fmt"
 	"html/template"
 	"io/ioutil"
@@ -13,10 +14,12 @@ import (
 )
 
 var (
-	Mgr *executor.Manager
+	//go:embed index.html
+	html string
+	Mgr  *executor.Manager
 )
 
-//HTTPHandleFunc web接口
+// HTTPHandleFunc web接口
 func HTTPHandleFunc(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm()
@@ -27,7 +30,7 @@ func HTTPHandleFunc(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == "GET" {
-		t, err := template.ParseFiles("assets/html/index.html")
+		t, err := template.New("index").Parse(html)
 		if err != nil {
 			w.Write([]byte("error"))
 			return
